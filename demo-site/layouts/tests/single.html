@@ -1,0 +1,8 @@
+<!doctype html>
+<html>
+<body>
+{{- range site.Data.test_cases }}
+<section data-case="{{ .id }}">{{ partial "swarm-icon/icon.html" .params }}</section>
+{{- end }}
+</body>
+</html>

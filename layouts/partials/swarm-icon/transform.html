@@ -1,0 +1,50 @@
+{{- /*
+  Composes rotate/flip into the style attribute exactly like the library's
+  appendTransformFunc (icon_transform.go): find an existing "transform:"
+  declaration and append to it space-separated, otherwise add a new one;
+  declarations are rejoined with "; ". Rotate is applied before flip, a
+  fixed order (a template call has no method-chain order to preserve).
+  Context: dict with "style" (string), "rotate" (number), "flip" (string).
+*/ -}}
+{{- $fns := slice -}}
+{{- with .rotate -}}
+  {{- $fns = $fns | append (printf "rotate(%gdeg)" (float .)) -}}
+{{- end -}}
+{{- with .flip -}}
+  {{- $d := lower (printf "%v" .) -}}
+  {{- $fn := "scaleX(-1)" -}}
+  {{- if or (eq $d "v") (eq $d "vertical") -}}
+    {{- $fn = "scaleY(-1)" -}}
+  {{- else if eq $d "both" -}}
+    {{- $fn = "scale(-1, -1)" -}}
+  {{- end -}}
+  {{- $fns = $fns | append $fn -}}
+{{- end -}}
+{{- $style := printf "%v" (.style | default "") -}}
+{{- $result := $style -}}
+{{- if $fns -}}
+  {{- $decls := slice -}}
+  {{- range split $style ";" -}}
+    {{- $d := trim . " \t" -}}
+    {{- if $d -}}
+      {{- $decls = $decls | append $d -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $joined := printf "%s" (delimit $fns " ") -}}
+  {{- $out := slice -}}
+  {{- $found := false -}}
+  {{- range $decls -}}
+    {{- if and (not $found) (findRE `^transform\s*:` .) -}}
+      {{- $existing := trim (replaceRE `^transform\s*:` "" .) " " -}}
+      {{- $out = $out | append (printf "transform: %s %s" $existing $joined) -}}
+      {{- $found = true -}}
+    {{- else -}}
+      {{- $out = $out | append . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if not $found -}}
+    {{- $out = $out | append (printf "transform: %s" $joined) -}}
+  {{- end -}}
+  {{- $result = printf "%s" (delimit $out "; ") -}}
+{{- end -}}
+{{- return $result -}}

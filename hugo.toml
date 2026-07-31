@@ -1,0 +1,5 @@
+# Module metadata for github.com/frostybee/hugo-swarm-icons.
+# This repo is a Hugo theme component: it ships layouts only, no content.
+[module]
+  [module.hugoVersion]
+    min = "0.128.0"

@@ -1,0 +1,15 @@
+{{- /*
+  Parses the attributes of an <svg ...> opening tag (passed as a string)
+  into a map. Matches whole key="value" tokens so that keys which are
+  substrings of other keys (width vs stroke-width) can never be confused.
+  Scratch.SetInMap is used instead of merge because merge matches keys
+  case-insensitively, which would be unsafe around viewBox.
+*/ -}}
+{{- $s := newScratch -}}
+{{- $s.Set "attrs" dict -}}
+{{- range findRE `[a-zA-Z_:][\w:.-]*="[^"]*"` . -}}
+  {{- $k := index (split . "=\"") 0 -}}
+  {{- $v := strings.TrimSuffix "\"" (strings.TrimPrefix (printf "%s=\"" $k) .) -}}
+  {{- $s.SetInMap "attrs" $k $v -}}
+{{- end -}}
+{{- return ($s.Get "attrs") -}}

@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  golden:
+    name: Build demo-site and diff golden output (Hugo ${{ matrix.hugo-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 0.128.0 is the documented minimum (module.hugoVersion); the second
+        # entry guards against regressions on current Hugo.
+        hugo-version: ["0.128.0", "0.161.1"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+
+      - uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ matrix.hugo-version }}
+
+      - name: Build demo-site
+        run: hugo --source demo-site --destination ../public-test --minify=false
+
+      - name: Diff against golden output
+        run: diff test/golden/manipulations.html public-test/tests/manipulations/index.html

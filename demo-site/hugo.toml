@@ -1,0 +1,7 @@
+baseURL = "https://example.org/"
+title = "hugo-swarm-icons demo"
+disableKinds = ["taxonomy", "term", "rss", "sitemap"]
+
+[module]
+[[module.imports]]
+path = "github.com/frostybee/hugo-swarm-icons"

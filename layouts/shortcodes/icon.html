@@ -1,0 +1,15 @@
+{{- /*
+  Markdown-facing wrapper over the swarm-icon partial.
+  Positional: {{< icon "tabler:home" >}}
+  Named:      {{< icon icon="tabler:home" size="20" rotate="45" flip="h" >}}
+  The open-ended "attrs" passthrough map is a partial-only feature.
+*/ -}}
+{{- $args := dict -}}
+{{- if .IsNamedParams -}}
+  {{- range $k, $v := .Params -}}
+    {{- $args = merge $args (dict $k $v) -}}
+  {{- end -}}
+{{- else -}}
+  {{- $args = dict "icon" (.Get 0) -}}
+{{- end -}}
+{{- partial "swarm-icon/icon.html" $args -}}

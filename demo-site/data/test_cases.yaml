@@ -1,0 +1,117 @@
+# Single source of truth for both the demo page (layouts/index.html) and the
+# golden test page (layouts/tests/single.html). Order is preserved in output.
+- id: plain
+  label: Plain render
+  params:
+    icon: "tabler:home"
+- id: size
+  label: Size (width = height = 32)
+  params:
+    icon: "tabler:home"
+    size: 32
+- id: width-only
+  label: Width 48, height derived from square viewBox
+  params:
+    icon: "tabler:star"
+    width: 48
+- id: width-nonsquare
+  label: Width 30 on 20x24 viewBox, height derives to 36
+  params:
+    icon: "tabler:banner"
+    width: 30
+- id: height-nonsquare-units
+  label: Height 1.5em on 20x24 viewBox, width derives to 1.25em
+  params:
+    icon: "tabler:banner"
+    height: "1.5em"
+- id: width-auto
+  label: Width auto (viewBox dimensions)
+  params:
+    icon: "tabler:banner"
+    width: "auto"
+- id: size-unset
+  label: Width unset removes both dimensions
+  params:
+    icon: "tabler:star"
+    width: "unset"
+- id: both-dimensions
+  label: Width and height both given, literal
+  params:
+    icon: "tabler:star"
+    width: "40"
+    height: "20"
+- id: fill
+  label: Fill crimson
+  params:
+    icon: "tabler:banner"
+    fill: "crimson"
+- id: stroke
+  label: Stroke and stroke-width
+  params:
+    icon: "lucide:heart"
+    stroke: "rebeccapurple"
+    stroke-width: "1.5"
+- id: opacity
+  label: Opacity 0.5
+  params:
+    icon: "tabler:star"
+    opacity: 0.5
+- id: rotate
+  label: Rotate 45 degrees
+  params:
+    icon: "tabler:arrow-up"
+    rotate: 45
+- id: flip-h
+  label: Flip horizontal
+  params:
+    icon: "tabler:arrow-up"
+    flip: "h"
+- id: flip-v
+  label: Flip vertical
+  params:
+    icon: "tabler:arrow-up"
+    flip: "v"
+- id: flip-both
+  label: Flip both
+  params:
+    icon: "tabler:arrow-up"
+    flip: "both"
+- id: rotate-flip
+  label: Rotate 90 + flip h, single transform declaration
+  params:
+    icon: "tabler:arrow-up"
+    rotate: 90
+    flip: "h"
+- id: style-plus-transform
+  label: User style preserved, transform appended
+  params:
+    icon: "tabler:arrow-up"
+    style: "color: red"
+    rotate: 180
+- id: class
+  label: Class concatenation
+  params:
+    icon: "tabler:home"
+    class: "nav-icon large"
+- id: title
+  label: Title implies role=img, no aria-hidden
+  params:
+    icon: "lucide:heart"
+    title: "Add to favorites <3"
+- id: attrs-passthrough
+  label: Passthrough attrs (id, data-*, aria-label)
+  params:
+    icon: "tabler:home"
+    attrs:
+      id: "home-icon"
+      data-nav: "true"
+      aria-label: "Home"
+- id: combined
+  label: Realistic combination
+  params:
+    icon: "lucide:heart"
+    size: 20
+    fill: "currentColor"
+    class: "icon icon-heart"
+    rotate: 15
+    title: "Favorite"

@@ -1,0 +1,10 @@
+{{- /*
+  Formats a number the way go-swarm-icons' deriveSize does:
+  round to 2 decimals, then strip trailing zeros and a trailing dot.
+  Mirrors math.Round(f*100)/100 + strconv.FormatFloat(f, 'f', -1, 64)
+  for realistic icon-size magnitudes.
+*/ -}}
+{{- $str := printf "%.2f" (float .) -}}
+{{- $str = replaceRE `0+$` "" $str -}}
+{{- $str = replaceRE `\.$` "" $str -}}
+{{- return $str -}}

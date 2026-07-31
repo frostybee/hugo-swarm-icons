@@ -1,0 +1,182 @@
+{{- /*
+  swarm-icon: inlines a CLI-exported SVG and reproduces the go-swarm-icons
+  fluent API by rewriting the root tag's attributes.
+
+  Call with a string:  {{ partial "swarm-icon/icon.html" "tabler:home" }}
+  Or with a dict:      icon (required, "prefix:name"), size, width, height,
+                       fill, stroke, stroke-width, opacity, rotate, flip,
+                       class, style, title, attrs (map, highest precedence).
+
+  Icons load from assets/icons/{prefix}/{name}.svg. Output attribute order
+  is ASCII-sorted (template range sorts map keys, matching the library's
+  renderAttributes). Values with empty strings are dropped, which doubles
+  as the delete mechanism for width/height "unset".
+*/ -}}
+{{- $p := . -}}
+{{- if not (reflect.IsMap $p) -}}
+  {{- $p = dict "icon" (printf "%v" $p) -}}
+{{- end -}}
+{{- $ref := printf "%v" (index $p "icon" | default "") -}}
+{{- if not $ref -}}
+  {{- errorf "swarm-icon: the \"icon\" parameter is required (e.g. \"tabler:home\")" -}}
+{{- end -}}
+{{- $refParts := split $ref ":" -}}
+{{- if or (ne (len $refParts) 2) (not (index $refParts 0)) (not (index $refParts 1)) -}}
+  {{- errorf "swarm-icon: %q is not a valid icon reference; use \"prefix:name\"" $ref -}}
+{{- end -}}
+{{- $prefix := index $refParts 0 -}}
+{{- $name := index $refParts 1 -}}
+
+{{- /* Load the exported SVG. */ -}}
+{{- $path := printf "icons/%s/%s.svg" $prefix $name -}}
+{{- $res := resources.Get $path -}}
+{{- if not $res -}}
+  {{- errorf "swarm-icon: no icon file at assets/%s. Export it first: swarm-icons icon export %s %s --dest assets/icons/%s" $path $prefix $name $prefix -}}
+{{- end -}}
+{{- $svg := trim $res.Content " \t\r\n" -}}
+{{- $headers := findRE `^<svg[^>]*>` $svg 1 -}}
+{{- if not $headers -}}
+  {{- errorf "swarm-icon: assets/%s does not start with an <svg> tag" $path -}}
+{{- end -}}
+{{- $header := index $headers 0 -}}
+{{- $inner := strings.TrimSuffix "</svg>" (strings.TrimPrefix $header $svg) -}}
+
+{{- /* Seed the working attribute map from the file's root tag. */ -}}
+{{- $s := newScratch -}}
+{{- $s.Set "attrs" dict -}}
+{{- range $k, $v := partial "swarm-icon/parse-tag.html" $header -}}
+  {{- $s.SetInMap "attrs" $k $v -}}
+{{- end -}}
+
+{{- /* viewBox dimensions for aspect-ratio derivation. */ -}}
+{{- $boxW := 0.0 -}}
+{{- $boxH := 0.0 -}}
+{{- with index ($s.Get "attrs") "viewBox" -}}
+  {{- $vb := split (replaceRE `\s+` " " (trim . " ")) " " -}}
+  {{- if eq (len $vb) 4 -}}
+    {{- $boxW = float (index $vb 2) -}}
+    {{- $boxH = float (index $vb 3) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Dimensions: size wins outright (Size(n): width = height = n). */ -}}
+{{- with index $p "size" -}}
+  {{- $s.SetInMap "attrs" "width" (printf "%v" .) -}}
+  {{- $s.SetInMap "attrs" "height" (printf "%v" .) -}}
+{{- else -}}
+  {{- $wp := printf "%v" (index $p "width" | default "") -}}
+  {{- $hp := printf "%v" (index $p "height" | default "") -}}
+  {{- if and $wp $hp -}}
+    {{- /* Both given: literal writes, no derivation. */ -}}
+    {{- $s.SetInMap "attrs" "width" $wp -}}
+    {{- $s.SetInMap "attrs" "height" $hp -}}
+  {{- else if or $wp $hp -}}
+    {{- $val := or $wp $hp -}}
+    {{- $lowered := lower $val -}}
+    {{- if in (slice "unset" "none" "undefined") $lowered -}}
+      {{- $s.DeleteInMap "attrs" "width" -}}
+      {{- $s.DeleteInMap "attrs" "height" -}}
+    {{- else if eq $lowered "auto" -}}
+      {{- if or $boxW $boxH -}}
+        {{- $s.SetInMap "attrs" "width" (partial "swarm-icon/fmtnum.html" $boxW) -}}
+        {{- $s.SetInMap "attrs" "height" (partial "swarm-icon/fmtnum.html" $boxH) -}}
+      {{- end -}}
+    {{- else -}}
+      {{- /* Mirror setDimension: literal value on the driving side, derived
+             (viewBox-ratio-scaled, unit preserved) on the other side. */ -}}
+      {{- $num := replaceRE `^(-?[0-9.]+).*$` "$1" $val -}}
+      {{- $numeric := findRE `^-?[0-9.]+$` $num -}}
+      {{- $canDerive := and $numeric (ne $boxW 0.0) (ne $boxH 0.0) -}}
+      {{- if not $canDerive -}}
+        {{- $s.SetInMap "attrs" "width" $val -}}
+        {{- $s.SetInMap "attrs" "height" $val -}}
+      {{- else -}}
+        {{- $unit := strings.TrimPrefix $num $val -}}
+        {{- if $wp -}}
+          {{- $derived := partial "swarm-icon/fmtnum.html" (div (math.Round (mul (mul (float $num) (div $boxH $boxW)) 100)) 100) -}}
+          {{- $s.SetInMap "attrs" "width" $val -}}
+          {{- $s.SetInMap "attrs" "height" (printf "%s%s" $derived $unit) -}}
+        {{- else -}}
+          {{- $derived := partial "swarm-icon/fmtnum.html" (div (math.Round (mul (mul (float $num) (div $boxW $boxH)) 100)) 100) -}}
+          {{- $s.SetInMap "attrs" "height" $val -}}
+          {{- $s.SetInMap "attrs" "width" (printf "%s%s" $derived $unit) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Plain attribute writes (Fill/Stroke/StrokeWidth/Opacity). */ -}}
+{{- with index $p "fill" -}}
+  {{- $s.SetInMap "attrs" "fill" (printf "%v" .) -}}
+{{- end -}}
+{{- with index $p "stroke" -}}
+  {{- $s.SetInMap "attrs" "stroke" (printf "%v" .) -}}
+{{- end -}}
+{{- with or (index $p "stroke-width") (index $p "strokewidth") -}}
+  {{- $s.SetInMap "attrs" "stroke-width" (printf "%v" .) -}}
+{{- end -}}
+{{- with index $p "opacity" -}}
+  {{- $s.SetInMap "attrs" "opacity" (printf "%g" (float .)) -}}
+{{- end -}}
+
+{{- /* Class: space-concatenate onto any existing class, no dedup. */ -}}
+{{- with index $p "class" -}}
+  {{- $existing := printf "%v" (index ($s.Get "attrs") "class" | default "") -}}
+  {{- $s.SetInMap "attrs" "class" (trim (printf "%s %s" $existing .) " ") -}}
+{{- end -}}
+
+{{- /* Style param overwrites (like Attr), then rotate/flip append into its
+       transform declaration (like Rotate/Flip after Attr). */ -}}
+{{- with index $p "style" -}}
+  {{- $s.SetInMap "attrs" "style" (printf "%v" .) -}}
+{{- end -}}
+{{- $rot := index $p "rotate" -}}
+{{- $flip := index $p "flip" -}}
+{{- if or $rot $flip -}}
+  {{- $style := printf "%v" (index ($s.Get "attrs") "style" | default "") -}}
+  {{- $s.SetInMap "attrs" "style" (partial "swarm-icon/transform.html" (dict "style" $style "rotate" $rot "flip" $flip)) -}}
+{{- end -}}
+
+{{- /* Title: prepended as the first child, HTML-escaped (like Title()). */ -}}
+{{- $titleTag := "" -}}
+{{- with index $p "title" -}}
+  {{- $titleTag = printf "<title>%s</title>" (htmlEscape (printf "%v" .)) -}}
+{{- end -}}
+
+{{- /* Passthrough attrs: highest precedence; empty values skipped (like Attr). */ -}}
+{{- with index $p "attrs" -}}
+  {{- range $k, $v := . -}}
+    {{- if $v -}}
+      {{- $s.SetInMap "attrs" $k (printf "%v" $v) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* ARIA gap-fill, applied last and never overwriting (like applyARIA).
+       A title implies role="img"; this is a deliberate ergonomic divergence
+       from the raw Icon.Title(), which leaves ARIA untouched. */ -}}
+{{- $attrs := $s.Get "attrs" -}}
+{{- if or $titleTag (index $attrs "aria-label") (index $attrs "aria-labelledby") (index $attrs "role") -}}
+  {{- if not (index $attrs "role") -}}
+    {{- $s.SetInMap "attrs" "role" "img" -}}
+  {{- end -}}
+{{- else -}}
+  {{- if not (index $attrs "aria-hidden") -}}
+    {{- $s.SetInMap "attrs" "aria-hidden" "true" -}}
+  {{- end -}}
+  {{- if not (index $attrs "focusable") -}}
+    {{- $s.SetInMap "attrs" "focusable" "false" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Serialize: sorted keys (range sorts), escaped values, invalid attribute
+       names silently dropped (same regex as the library's renderAttributes). */ -}}
+{{- $out := "<svg" -}}
+{{- range $k, $v := $s.Get "attrs" -}}
+  {{- if and $v (findRE `^[a-zA-Z_:][\w:.-]*$` $k) -}}
+    {{- $out = printf `%s %s="%s"` $out $k (htmlEscape (printf "%v" $v)) -}}
+  {{- end -}}
+{{- end -}}
+{{- $out = printf "%s>%s%s</svg>" $out $titleTag $inner -}}
+{{- return safeHTML $out -}}
