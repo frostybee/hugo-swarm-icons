@@ -3,6 +3,7 @@
 A Hugo module that inlines SVG icons exported by the [go-swarm-icons](https://github.com/frostybee/go-swarm-icons) CLI and brings the library's fluent manipulation API (resize, rotate, flip, colors, opacity, class, title) to Hugo templates and Markdown.
 
 Library documentation: [frostybee.github.io/go-swarm-icons](https://frostybee.github.io/go-swarm-icons/)
+Live demo: [frostybee.github.io/hugo-swarm-icons](https://frostybee.github.io/hugo-swarm-icons/)
 
 Requires Hugo 0.128.0 or later. No icons are bundled; export the sets your site uses with the `swarm-icons` CLI.
 
@@ -107,6 +108,8 @@ The `demo-site/` directory doubles as demo and test fixture, driven by `demo-sit
 cd demo-site
 hugo server            # browse the demo
 ```
+
+A built copy is published to GitHub Pages from `main` by `.github/workflows/deploy-demo.yaml`: [frostybee.github.io/hugo-swarm-icons](https://frostybee.github.io/hugo-swarm-icons/).
 
 CI builds the demo site and byte-compares `tests/manipulations/index.html` against `test/golden/manipulations.html`. After an intentional behavior change, regenerate the golden file, inspect the diff, and commit it:
 

@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Go parity test (`test/parity/`): renders the shared fixture cases through the real go-swarm-icons library (v0.2.0) and byte-compares against the golden file, enforced in CI. Catches drift between the library's transform semantics and the template reimplementation.
+- Live demo deployed to GitHub Pages from `main` (`deploy-demo.yaml`): [frostybee.github.io/hugo-swarm-icons](https://frostybee.github.io/hugo-swarm-icons/).
 
 ## v0.1.0
 

@@ -1,0 +1,56 @@
+name: Deploy Demo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "demo-site/**"
+      - "layouts/**"
+      - "hugo.toml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+
+      - uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.161.1"
+
+      - uses: actions/configure-pages@v5
+        id: pages
+        with:
+          enablement: true
+
+      # --baseURL replaces the placeholder in demo-site/hugo.toml. The module
+      # import resolves to this checkout through demo-site/go.mod's replace
+      # directive, which applies here because demo-site is the main module of
+      # the build (unlike library consumers, who fetch the tagged module).
+      - name: Build demo site
+        run: hugo --source demo-site --destination ../public --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
