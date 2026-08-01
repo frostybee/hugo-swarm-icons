@@ -1,11 +1,36 @@
-# hugo-swarm-icons
+<p align="center">
+  <img src="brand/swarm-icons-logo.svg" alt="Swarm Icons logo" width="160" height="160">
+</p>
+
+<h1 align="center">Hugo Swarm Icons</h1>
+
+<p align="center">
+  <a href="https://frostybee.github.io/hugo-swarm-icons/"><img src="https://img.shields.io/badge/Live%20demo-hugo--swarm--icons-1f6feb" alt="Live demo"></a>
+  <a href="https://frostybee.github.io/go-swarm-icons/docs/guides/hugo-integration/"><img src="https://img.shields.io/badge/Documentation-integration%20guide-1f6feb" alt="Documentation"></a>
+  <a href="https://github.com/frostybee/hugo-swarm-icons/actions/workflows/ci.yml"><img src="https://github.com/frostybee/hugo-swarm-icons/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <img src="https://img.shields.io/badge/Hugo-%E2%89%A50.128.0-ff4088" alt="Hugo Version">
+</p>
 
 A Hugo module that inlines SVG icons exported by the [go-swarm-icons](https://github.com/frostybee/go-swarm-icons) CLI and brings the library's fluent manipulation API (resize, rotate, flip, colors, opacity, class, title) to Hugo templates and Markdown.
 
-Library documentation: [frostybee.github.io/go-swarm-icons](https://frostybee.github.io/go-swarm-icons/)
-Live demo: [frostybee.github.io/hugo-swarm-icons](https://frostybee.github.io/hugo-swarm-icons/)
+<p align="center">
+  <strong><a href="https://frostybee.github.io/hugo-swarm-icons/">Try the live demo</a></strong>
+</p>
 
 Requires Hugo 0.128.0 or later. No icons are bundled; export the sets your site uses with the `swarm-icons` CLI.
+
+## Features
+
+- **Manipulation parameters**: `size`, `width`, `height`, `rotate`, `flip`, `fill`, `stroke`, `stroke-width`, `opacity`, `class`, `style`, and `title`, available from both templates and Markdown.
+- **viewBox-aware sizing**: give one dimension and the other derives from the icon's aspect ratio, CSS units preserved, so non-square icons never distort.
+- **Composed transforms**: `rotate` and `flip` collapse into a single CSS `transform` declaration and append to any `style` you pass instead of overwriting it.
+- **Accessibility defaults**: icons are `aria-hidden` and unfocusable by default; `title` or `aria-label` switches them to `role="img"` with an escaped `<title>` element.
+- **Any Iconify set**: export from Tabler, Heroicons, Font Awesome, Material Design, Simple Icons, and 200+ others with the CLI, no Node.js required.
+- **Only what you use**: icons are files in `assets/icons/`, so nothing unused ships with the site.
+- **Loud on missing icons**: referencing an icon you have not exported fails the build with the exact export command needed to fix it.
+- **Tested against the library**: CI byte-compares the template output against a golden file and against the real go-swarm-icons rendering.
+- **Pure templates**: no JavaScript, no build step, no runtime dependencies.
 
 ## Install
 
@@ -102,7 +127,7 @@ Every fluent method in go-swarm-icons operates only on the root `<svg>` element'
 
 ## Development
 
-The `demo-site/` directory doubles as demo and test fixture, driven by `demo-site/data/test_cases.yaml`. The SVGs under `demo-site/assets/icons/` are hand-authored fixtures shaped like real CLI exports (including one non-square viewBox to exercise the aspect-ratio math); they are not a bundled icon set and are never mounted into consuming sites.
+The `demo-site/` directory doubles as demo and test fixture, driven by `demo-site/data/test_cases.yaml`. Under `demo-site/assets/icons/`, five SVGs (`home`, `star`, `arrow-up`, `banner`, and lucide's `heart`) are hand-authored golden-test fixtures shaped like real CLI exports (including one non-square viewBox to exercise the aspect-ratio math); do not regenerate them. The rest are real CLI exports used only by the landing page. None of them are a bundled icon set, and none are mounted into consuming sites.
 
 ```bash
 cd demo-site
@@ -132,10 +157,10 @@ Because both jobs compare against the same golden file, regenerating it after a 
 
 The module ports everything that operates on a rendered icon. The library's runtime machinery has no template equivalent, so the following do not carry over:
 
-- **Aliases and fallback icons.** There is no manager holding alias maps, and no fallback when a lookup fails: a missing icon fails the build instead. For a static site a hard build-time failure is usually what you want, but it is a behavioral difference.
-- **Runtime providers.** Icons must be exported to disk before the build; there is no chain provider and no on-demand fetching from the Iconify API. In library terms, the module behaves like a directory provider only.
-- **Renderer configuration layers.** The library's five-layer attribute merge (icon, global defaults, per-prefix, per-suffix, caller) reduces to three here: file attributes, then call parameters, then `attrs`.
-- **Sprite sheets.** Not yet available in template form; see the roadmap. Until then, the pre-build Go program approach in the [go-swarm-icons Hugo guide](https://frostybee.github.io/go-swarm-icons/docs/guides/hugo-integration/) covers it.
+- **Aliases and fallback icons**: there is no manager holding alias maps, and no fallback when a lookup fails, so a missing icon fails the build instead. For a static site a hard build-time failure is usually what you want, but it is a behavioral difference.
+- **Runtime providers**: icons must be exported to disk before the build; there is no chain provider and no on-demand fetching from the Iconify API. In library terms, the module behaves like a directory provider only.
+- **Renderer configuration layers**: the library's five-layer attribute merge (icon, global defaults, per-prefix, per-suffix, caller) reduces to three here: file attributes, then call parameters, then `attrs`.
+- **Sprite sheets**: not yet available in template form; see the roadmap. Until then, the pre-build Go program approach in the [go-swarm-icons Hugo guide](https://frostybee.github.io/go-swarm-icons/docs/guides/hugo-integration/) covers it.
 
 ## Roadmap
 

@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Master logo for go-swarm-icons. Shares the amber swarm family with the PHP library's
+       logo but marks the Go variant with Go cyan (#00ADD8) rim and rings on a deep teal
+       field. The PHP-identical original is archive/logo-php-original.svg. -->
+  <defs>
+    <linearGradient id="hexcore" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+    <radialGradient id="bggrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#0d4f63"/>
+      <stop offset="100%" style="stop-color:#071e26"/>
+    </radialGradient>
+  </defs>
+
+  <circle cx="100" cy="100" r="98" fill="url(#bggrad)" stroke="#00ADD8" stroke-width="2"/>
+
+  <ellipse cx="100" cy="90" rx="72" ry="28" fill="none" stroke="#00ADD8" stroke-width="1" opacity="0.4" transform="rotate(-35, 100, 90)"/>
+  <ellipse cx="100" cy="90" rx="72" ry="28" fill="none" stroke="#00ADD8" stroke-width="1" opacity="0.4" transform="rotate(35, 100, 90)"/>
+
+  <polygon points="100,72 115,80 115,96 100,104 85,96 85,80" fill="url(#hexcore)" stroke="#fcd34d" stroke-width="1.5"/>
+  <polygon points="115,56 130,64 130,80 115,88 100,80 100,64" fill="none" stroke="#fcd34d" stroke-width="1.5"/>
+  <polygon points="116,58 128,65 128,79 116,86 104,79 104,65" fill="#f59e0b" opacity="0.45"/>
+  <polygon points="115,88 130,96 130,112 115,120 100,112 100,96" fill="none" stroke="#fcd34d" stroke-width="1.5"/>
+  <polygon points="116,90 128,97 128,110 116,118 104,110 104,97" fill="#f59e0b" opacity="0.4"/>
+  <polygon points="85,56 100,64 100,80 85,88 70,80 70,64" fill="none" stroke="#fcd34d" stroke-width="1.5"/>
+  <polygon points="86,58 98,65 98,79 86,86 74,79 74,65" fill="#f59e0b" opacity="0.45"/>
+  <polygon points="85,88 100,96 100,112 85,120 70,112 70,96" fill="none" stroke="#fcd34d" stroke-width="1.5"/>
+  <polygon points="86,90 98,97 98,110 86,118 74,110 74,97" fill="#f59e0b" opacity="0.4"/>
+  <polygon points="100,104 115,112 115,128 100,136 85,128 85,112" fill="none" stroke="#fcd34d" stroke-width="1.5" opacity="0.9"/>
+  <polygon points="101,106 113,113 113,126 101,134 89,126 89,113" fill="#f59e0b" opacity="0.35"/>
+
+  <!-- </> mark, drawn as strokes: rasterizers without font support drop <text> glyphs -->
+  <g fill="none" stroke="#071e26" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M95.5 83 90 88l5.5 5"/>
+    <path d="M102.5 82.5 97.5 93.5"/>
+    <path d="M104.5 83 110 88l-5.5 5"/>
+  </g>
+
+  <g transform="translate(160,50) rotate(20) scale(0.75)">
+    <ellipse cx="0" cy="0" rx="13" ry="8" fill="#f59e0b"/>
+    <rect x="-5" y="-8" width="3.5" height="16" rx="1" fill="#071e26" opacity="0.7"/>
+    <rect x="2" y="-8" width="3.5" height="16" rx="1" fill="#071e26" opacity="0.7"/>
+    <ellipse cx="-6" cy="-7" rx="7" ry="4.5" fill="white" opacity="0.6" transform="rotate(-25)"/>
+    <ellipse cx="4" cy="-9" rx="7" ry="4.5" fill="white" opacity="0.6" transform="rotate(15)"/>
+    <circle cx="12" cy="-1" r="1.8" fill="#071e26"/>
+  </g>
+  <g transform="translate(155,138) rotate(45) scale(0.72)">
+    <ellipse cx="0" cy="0" rx="13" ry="8" fill="#f59e0b"/>
+    <rect x="-5" y="-8" width="3.5" height="16" rx="1" fill="#071e26" opacity="0.7"/>
+    <rect x="2" y="-8" width="3.5" height="16" rx="1" fill="#071e26" opacity="0.7"/>
+    <ellipse cx="-6" cy="-7" rx="7" ry="4.5" fill="white" opacity="0.55" transform="rotate(-25)"/>
+    <ellipse cx="4" cy="-9" rx="7" ry="4.5" fill="white" opacity="0.55" transform="rotate(15)"/>
+    <circle cx="12" cy="-1" r="1.8" fill="#071e26"/>
+  </g>
+  <g transform="translate(42,138) rotate(140) scale(0.72)">
+    <ellipse cx="0" cy="0" rx="13" ry="8" fill="#f59e0b"/>
+    <rect x="-5" y="-8" width="3.5" height="16" rx="1" fill="#071e26" opacity="0.7"/>
+    <rect x="2" y="-8" width="3.5" height="16" rx="1" fill="#071e26" opacity="0.7"/>
+    <ellipse cx="-6" cy="-7" rx="7" ry="4.5" fill="white" opacity="0.55" transform="rotate(-25)"/>
+    <ellipse cx="4" cy="-9" rx="7" ry="4.5" fill="white" opacity="0.55" transform="rotate(15)"/>
+    <circle cx="12" cy="-1" r="1.8" fill="#071e26"/>
+  </g>
+  <g transform="translate(38,50) rotate(-155) scale(0.75)">
+    <ellipse cx="0" cy="0" rx="13" ry="8" fill="#f59e0b"/>
+    <rect x="-5" y="-8" width="3.5" height="16" rx="1" fill="#071e26" opacity="0.7"/>
+    <rect x="2" y="-8" width="3.5" height="16" rx="1" fill="#071e26" opacity="0.7"/>
+    <ellipse cx="-6" cy="-7" rx="7" ry="4.5" fill="white" opacity="0.6" transform="rotate(-25)"/>
+    <ellipse cx="4" cy="-9" rx="7" ry="4.5" fill="white" opacity="0.6" transform="rotate(15)"/>
+    <circle cx="12" cy="-1" r="1.8" fill="#071e26"/>
+  </g>
+
+  <circle cx="153" cy="55" r="1.6" fill="#f59e0b" opacity="0.6"/>
+  <circle cx="147" cy="59" r="1.1" fill="#f59e0b" opacity="0.4"/>
+  <circle cx="141" cy="62" r="0.7" fill="#f59e0b" opacity="0.25"/>
+  <circle cx="149" cy="133" r="1.6" fill="#f59e0b" opacity="0.6"/>
+  <circle cx="144" cy="128" r="1.1" fill="#f59e0b" opacity="0.4"/>
+  <circle cx="139" cy="124" r="0.7" fill="#f59e0b" opacity="0.25"/>
+  <circle cx="48" cy="133" r="1.6" fill="#f59e0b" opacity="0.6"/>
+  <circle cx="54" cy="128" r="1.1" fill="#f59e0b" opacity="0.4"/>
+  <circle cx="59" cy="124" r="0.7" fill="#f59e0b" opacity="0.25"/>
+  <circle cx="44" cy="55" r="1.6" fill="#f59e0b" opacity="0.6"/>
+  <circle cx="50" cy="59" r="1.1" fill="#f59e0b" opacity="0.4"/>
+  <circle cx="56" cy="62" r="0.7" fill="#f59e0b" opacity="0.25"/>
+</svg>
