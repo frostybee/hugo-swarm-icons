@@ -2,6 +2,8 @@
 
 A Hugo module that inlines SVG icons exported by the [go-swarm-icons](https://github.com/frostybee/go-swarm-icons) CLI and brings the library's fluent manipulation API (resize, rotate, flip, colors, opacity, class, title) to Hugo templates and Markdown.
 
+Library documentation: [frostybee.github.io/go-swarm-icons](https://frostybee.github.io/go-swarm-icons/)
+
 Requires Hugo 0.128.0 or later. No icons are bundled; export the sets your site uses with the `swarm-icons` CLI.
 
 ## Install
@@ -99,7 +101,7 @@ Every fluent method in go-swarm-icons operates only on the root `<svg>` element'
 
 ## Development
 
-The `demo-site/` directory doubles as demo and test fixture, driven by `demo-site/data/test_cases.yaml`:
+The `demo-site/` directory doubles as demo and test fixture, driven by `demo-site/data/test_cases.yaml`. The SVGs under `demo-site/assets/icons/` are hand-authored fixtures shaped like real CLI exports (including one non-square viewBox to exercise the aspect-ratio math); they are not a bundled icon set and are never mounted into consuming sites.
 
 ```bash
 cd demo-site
@@ -114,10 +116,28 @@ cp public-test/tests/manipulations/index.html test/golden/manipulations.html
 git diff test/golden/manipulations.html
 ```
 
+A second CI job guards against drift from the library itself: `test/parity/` renders the same fixture cases through the real go-swarm-icons API and byte-compares against the golden file, compensating only for the documented `title` divergence. Run it locally with:
+
+```bash
+cd test/parity
+go test ./...
+```
+
+Because both jobs compare against the same golden file, regenerating it after a behavior change re-validates the partial and the library parity together. A parity failure with an unchanged partial means the library's semantics moved and the templates need to follow.
+
+## Scope and limitations
+
+The module ports everything that operates on a rendered icon. The library's runtime machinery has no template equivalent, so the following do not carry over:
+
+- **Aliases and fallback icons.** There is no manager holding alias maps, and no fallback when a lookup fails: a missing icon fails the build instead. For a static site a hard build-time failure is usually what you want, but it is a behavioral difference.
+- **Runtime providers.** Icons must be exported to disk before the build; there is no chain provider and no on-demand fetching from the Iconify API. In library terms, the module behaves like a directory provider only.
+- **Renderer configuration layers.** The library's five-layer attribute merge (icon, global defaults, per-prefix, per-suffix, caller) reduces to three here: file attributes, then call parameters, then `attrs`.
+- **Sprite sheets.** Not yet available in template form; see the roadmap. Until then, the pre-build Go program approach in the [go-swarm-icons Hugo guide](https://frostybee.github.io/go-swarm-icons/docs/guides/hugo-integration/) covers it.
+
 ## Roadmap
 
 - Sprite-sheet partial (template-side counterpart of `SpriteCollector`)
-- Go parity test rendering fixtures through the real library API
+- Alias support via a site data file
 
 ## License
 

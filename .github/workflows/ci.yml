@@ -36,3 +36,22 @@ jobs:
 
       - name: Diff against golden output
         run: diff test/golden/manipulations.html public-test/tests/manipulations/index.html
+
+  parity:
+    name: Go parity (library vs partial)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+
+      # Renders the same fixture cases through the real go-swarm-icons
+      # library and byte-compares against the golden file, catching drift
+      # between the library's transform semantics and the template
+      # reimplementation.
+      - name: Run parity test
+        working-directory: test/parity
+        run: go test ./...
