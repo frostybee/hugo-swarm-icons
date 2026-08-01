@@ -1,23 +1,437 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>{{ site.Title }}</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 60rem; margin: 2rem auto; padding: 0 1rem; }
-    section { display: flex; align-items: center; gap: 1rem; padding: .5rem 0; border-bottom: 1px solid #ddd; }
-    section code { margin-left: auto; color: #666; font-size: .8rem; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>hugo-swarm-icons · inline SVG icons with parameters</title>
+<meta name="description" content="A Hugo module that inlines SVG icons from any Iconify set and exposes resize, rotate, flip, color, and accessibility parameters in templates and Markdown.">
+<link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#071E26;
+  --panel:#0B2833;
+  --panel-2:#0E303D;
+  --line:rgba(127,163,176,.18);
+  --grid:rgba(127,178,196,.06);
+  --text:#DCEAF0;
+  --muted:#8FAEBA;
+  --cyan:#00ADD8;
+  --amber:#F59E0B;
+  --coral:#FF7A6B;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --display:"Bricolage Grotesque",system-ui,sans-serif;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+svg{vertical-align:middle}
+
+/* ---- header ---- */
+header{border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0;flex-wrap:wrap;gap:8px 16px}
+.brand{font-family:var(--display);font-weight:600;font-size:17px;color:var(--text);display:flex;align-items:center;gap:10px}
+.brand svg{color:var(--amber)}
+.nav-links{display:flex;gap:22px;font-size:14px}
+.nav-links a{color:var(--muted)}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+
+/* ---- hero ---- */
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding-block:72px 80px;align-items:center}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:16px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.6vw,52px);line-height:1.08;letter-spacing:-.01em}
+.lede{color:var(--muted);margin:20px 0 28px;max-width:44ch}
+.lede strong{color:var(--text);font-weight:600}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:10px 20px;border-radius:6px;font-size:15px;font-weight:600}
+.btn-solid{background:var(--cyan);color:#04222B}
+.btn-solid:hover{background:#25c2e8;text-decoration:none}
+.btn-ghost{border:1px solid var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:var(--cyan);text-decoration:none}
+.hero-note{margin-top:22px;font-size:13px;color:var(--muted)}
+
+/* ---- playground: the artboard ---- */
+.playground{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+.play-top{
+  background:var(--panel-2);border-bottom:1px solid var(--line);
+  padding:10px 18px 13px;
+}
+.play-label{
+  display:block;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.04em;color:var(--muted);
+  margin-bottom:5px;
+}
+.play-code{
+  font-family:var(--mono);font-size:12.5px;color:var(--muted);
+  white-space:pre-wrap;word-break:break-word;
+  min-height:19px;
+}
+.play-code .p{color:var(--cyan)}
+.play-code .v{color:var(--amber)}
+.artboard{
+  height:280px;display:flex;align-items:center;justify-content:center;
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  background-position:center center;
+}
+.artboard .stage{transition:transform .25s ease,color .25s ease;color:var(--text)}
+.artboard .stage svg{transition:width .25s ease,height .25s ease}
+.play-hint{
+  display:flex;align-items:flex-start;gap:8px;
+  font-size:13px;color:var(--amber);line-height:1.45;
+  padding:12px 18px 0;border-top:1px solid var(--line);
+}
+.play-hint svg{flex-shrink:0;margin-top:2px}
+.play-controls{display:grid;gap:10px;padding:12px 18px 16px}
+.chip-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chip-row .lbl{font-family:var(--mono);font-size:11.5px;color:var(--muted);width:56px;flex-shrink:0}
+.chip{
+  font-family:var(--mono);font-size:12px;color:var(--muted);
+  background:none;border:1px solid var(--line);border-radius:5px;
+  padding:4px 11px;cursor:pointer;transition:color .15s,border-color .15s;
+}
+.chip:hover{color:var(--text)}
+.chip[aria-pressed="true"]{color:#04222B;background:var(--cyan);border-color:var(--cyan)}
+
+/* ---- sections ---- */
+section{padding:64px 0;border-top:1px solid var(--line)}
+.sec-head{margin-bottom:36px;max-width:60ch}
+.sec-eyebrow{font-family:var(--mono);font-size:13px;color:var(--cyan);margin-bottom:10px}
+h2{font-family:var(--display);font-weight:600;font-size:28px;letter-spacing:-.01em}
+.sec-head p{color:var(--muted);margin-top:10px}
+.sec-head p code,.card-note code{font-family:var(--mono);font-size:.85em;color:var(--text)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden}
+.card-stage{
+  min-height:120px;display:flex;align-items:center;justify-content:center;gap:14px;
+  padding:20px;
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;background-position:center;
+}
+.card-code{
+  font-family:var(--mono);font-size:11.5px;color:var(--muted);
+  padding:12px 14px;border-top:1px solid var(--line);background:var(--panel-2);
+  white-space:nowrap;overflow-x:auto;
+}
+.card-code .p{color:var(--cyan)}
+.card-code .v{color:var(--amber)}
+.card-note{padding:10px 14px 12px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
+
+/* color inheritance strip */
+.inherit{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px}
+.inherit .swatch{
+  flex:1;min-width:200px;border:1px solid var(--line);border-radius:8px;
+  padding:18px;display:flex;align-items:center;gap:12px;font-size:14px;background:var(--panel);
+}
+
+/* markup comparison */
+.markup{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.markup pre{
+  font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--muted);
+  padding:16px;overflow-x:auto;
+}
+.markup pre .hl{color:var(--amber)}
+.markup .card-head{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13.5px;display:flex;align-items:center;gap:10px}
+.markup .card-head svg{flex-shrink:0}
+.markup .card-head code{font-family:var(--mono);font-size:.85em;color:var(--text)}
+
+/* icon wall */
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}
+.tile{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:16px 6px 12px;border:1px solid var(--line);border-radius:8px;
+  color:var(--muted);transition:color .15s,border-color .15s;
+}
+.tile:hover{color:var(--amber);border-color:var(--amber)}
+.tile span{font-family:var(--mono);font-size:10px;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:40px 0 56px;font-size:14px;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.foot-links{display:flex;gap:20px;flex-wrap:wrap}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;padding-block:48px 56px}
+  section{padding:48px 0}
+}
+</style>
 </head>
 <body>
-<h1>{{ site.Title }}</h1>
-<p>Each row renders one entry from <code>data/test_cases.yaml</code>.</p>
-{{ range site.Data.test_cases }}
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:feather" "size" 20) }} hugo-swarm-icons</div>
+    <nav class="nav-links">
+      <a href="https://github.com/frostybee/hugo-swarm-icons">GitHub</a>
+      <a href="https://frostybee.github.io/go-swarm-icons/docs/guides/hugo-integration/">Docs</a>
+      <a href="{{ "tests/manipulations/" | relURL }}">Test matrix</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap hero">
+  <div>
+    <p class="eyebrow">A Hugo module</p>
+    <h1>Inline SVG icons, with parameters.</h1>
+    <p class="lede">Export icons from <strong>any of the 200+ Iconify sets</strong>, then size, rotate, flip, recolor, and label them straight from templates and Markdown, with accessibility handled by default.</p>
+    <div class="cta">
+      <a class="btn btn-solid" href="https://frostybee.github.io/go-swarm-icons/docs/guides/hugo-integration/">Get started</a>
+      <a class="btn btn-ghost" href="https://github.com/frostybee/hugo-swarm-icons">View on GitHub</a>
+    </div>
+    <p class="hero-note">Every icon on this page is rendered by the module at build time. The output is byte-tested against the <a href="https://github.com/frostybee/go-swarm-icons">go-swarm-icons</a> Go library.</p>
+  </div>
+
+  <div class="playground" id="playground">
+    <div class="play-top">
+      <span class="play-label">Markdown shortcode</span>
+      <div class="play-code" id="play-code" aria-live="polite"></div>
+    </div>
+    <div class="artboard">
+      <div class="stage" id="stage">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:rocket" "size" 96) }}</div>
+    </div>
+    <div class="play-hint">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:click" "size" 16) }}<span><strong>Live demo</strong> &middot; pick any value below and watch the icon and its shortcode update</span></div>
+    <div class="play-controls">
+      <div class="chip-row" data-param="size">
+        <span class="lbl">size</span>
+        <button class="chip" data-v="48">48</button>
+        <button class="chip" data-v="96" aria-pressed="true">96</button>
+        <button class="chip" data-v="144">144</button>
+      </div>
+      <div class="chip-row" data-param="rotate">
+        <span class="lbl">rotate</span>
+        <button class="chip" data-v="" aria-pressed="true">0</button>
+        <button class="chip" data-v="45">45</button>
+        <button class="chip" data-v="90">90</button>
+        <button class="chip" data-v="180">180</button>
+      </div>
+      <div class="chip-row" data-param="flip">
+        <span class="lbl">flip</span>
+        <button class="chip" data-v="" aria-pressed="true">none</button>
+        <button class="chip" data-v="h">h</button>
+        <button class="chip" data-v="v">v</button>
+        <button class="chip" data-v="both">both</button>
+      </div>
+      <div class="chip-row" data-param="color">
+        <span class="lbl">color</span>
+        <button class="chip" data-v="" aria-pressed="true">current</button>
+        <button class="chip" data-v="#00ADD8">cyan</button>
+        <button class="chip" data-v="#F59E0B">amber</button>
+        <button class="chip" data-v="#FF7A6B">coral</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section>
-  {{ partial "swarm-icon/icon.html" .params }}
-  <strong>{{ .label }}</strong>
-  <code>{{ jsonify .params }}</code>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-eyebrow">size= &nbsp;width= &nbsp;height=</p>
+      <h2>Sizing</h2>
+      <p>Give one dimension and the other derives from the icon's aspect ratio, CSS units preserved. The banner icon below has a non-square 20&times;24 viewBox; the module keeps it undistorted.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-stage">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:home" "size" 48) }}</div>
+        <div class="card-code"><span class="p">size</span>=<span class="v">"48"</span></div>
+        <div class="card-note">Width and height set together.</div>
+      </div>
+      <div class="card">
+        <div class="card-stage">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:banner" "width" "3em") }}</div>
+        <div class="card-code"><span class="p">width</span>=<span class="v">"3em"</span></div>
+        <div class="card-note">Height derives to <code>3.6em</code> from the 20&times;24 viewBox.</div>
+      </div>
+      <div class="card">
+        <div class="card-stage">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:banner" "height" "48") }}</div>
+        <div class="card-code"><span class="p">height</span>=<span class="v">"48"</span></div>
+        <div class="card-note">Width derives to <code>40</code>, ratio intact.</div>
+      </div>
+      <div class="card">
+        <div class="card-stage" style="font-size:40px">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:star" "width" "unset" "style" "width: 1em; height: 1em") }}</div>
+        <div class="card-code"><span class="p">width</span>=<span class="v">"unset"</span></div>
+        <div class="card-note">Attributes removed; CSS takes over.</div>
+      </div>
+    </div>
+  </div>
 </section>
-{{ end }}
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-eyebrow">rotate= &nbsp;flip=</p>
+      <h2>Rotate and flip</h2>
+      <p>Rotation and flips collapse into a single <code>transform</code> declaration, and they append to any <code>style</code> you pass instead of overwriting it.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-stage">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:arrow-up" "size" 40 "rotate" 45) }}</div>
+        <div class="card-code"><span class="p">rotate</span>=<span class="v">"45"</span></div>
+      </div>
+      <div class="card">
+        <div class="card-stage">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:arrow-up" "size" 40 "flip" "h") }}</div>
+        <div class="card-code"><span class="p">flip</span>=<span class="v">"h"</span></div>
+      </div>
+      <div class="card">
+        <div class="card-stage">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:arrow-up" "size" 40 "rotate" 90 "flip" "both") }}</div>
+        <div class="card-code"><span class="p">rotate</span>=<span class="v">"90"</span> <span class="p">flip</span>=<span class="v">"both"</span></div>
+      </div>
+      <div class="card">
+        <div class="card-stage">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:arrow-up" "size" 40 "style" "color: #F59E0B" "rotate" 180) }}</div>
+        <div class="card-code"><span class="p">style</span>=<span class="v">"color:&hellip;"</span> <span class="p">rotate</span>=<span class="v">"180"</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-eyebrow">fill= &nbsp;stroke= &nbsp;style=</p>
+      <h2>Color</h2>
+      <p>Icon sets draw with <code>currentColor</code>, so icons inherit the surrounding CSS <code>color</code> with no configuration. Override per instance with <code>style</code>, <code>fill</code>, or <code>stroke</code>.</p>
+    </div>
+    <div class="inherit">
+      <div class="swatch" style="color:#DCEAF0">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:sun" "size" 22) }} inherits body text</div>
+      <div class="swatch" style="color:#00ADD8">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:cloud" "size" 22) }} inherits cyan</div>
+      <div class="swatch" style="color:#F59E0B">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:bolt" "size" 22) }} inherits amber</div>
+      <div class="swatch" style="color:#FF7A6B">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:flame" "size" 22) }} inherits coral</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-eyebrow">title= &nbsp;attrs=</p>
+      <h2>Accessibility</h2>
+      <p>Decorative icons are hidden from screen readers. Pass <code>title</code> or <code>aria-label</code> and the icon switches to labeled mode. This is the module's real output, byte for byte.</p>
+    </div>
+    <div class="markup">
+      <div class="card">
+        <div class="card-head">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:bell" "size" 20) }} Decorative, the default</div>
+        <pre>&lt;svg <span class="hl">aria-hidden="true"</span>
+     <span class="hl">focusable="false"</span>
+     height="24" viewBox="0 0 24 24"
+     width="24" &hellip;&gt;</pre>
+      </div>
+      <div class="card">
+        <div class="card-head">{{ partial "swarm-icon/icon.html" (dict "icon" "tabler:bell" "size" 20 "title" "Notifications") }} With <code>title="Notifications"</code></div>
+        <pre>&lt;svg height="24" <span class="hl">role="img"</span>
+     viewBox="0 0 24 24" width="24" &hellip;&gt;
+  <span class="hl">&lt;title&gt;Notifications&lt;/title&gt;</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-eyebrow">assets/icons/{prefix}/{name}.svg</p>
+      <h2>Any Iconify set</h2>
+      <p>Nothing is bundled. The <a href="https://frostybee.github.io/go-swarm-icons/docs/cli/">swarm-icons CLI</a> exports sanitized SVGs from Tabler, Heroicons, Font Awesome, Material Design, Simple Icons, and 200+ other sets, no Node.js required. Referencing an icon you haven't exported fails the build with the exact command to fix it.</p>
+    </div>
+    <div class="wall">
+      {{ range slice "search" "settings" "bell" "bookmark" "camera" "cloud" "rocket" "moon" "sun" "bolt" "flame" "gift" "map-pin" "message-circle" "music" "palette" "phone" "photo" "send" "shield-check" "thumb-up" "trash" "user" "wifi" "world" "check" "x" "alert-triangle" "download" "upload" "code" "brush" "feather" "calendar" "mail" "lock" }}
+      <div class="tile">{{ partial "swarm-icon/icon.html" (dict "icon" (printf "tabler:%s" .) "size" 26) }}<span>{{ . }}</span></div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>MIT licensed. Icons above are from <a href="https://tabler.io/icons">Tabler Icons</a>.</div>
+    <div class="foot-links">
+      <a href="https://github.com/frostybee/hugo-swarm-icons">GitHub</a>
+      <a href="https://frostybee.github.io/go-swarm-icons/docs/guides/hugo-integration/">Integration guide</a>
+      <a href="https://frostybee.github.io/go-swarm-icons/">go-swarm-icons</a>
+      <a href="{{ "shortcode-demo/" | relURL }}">Shortcode demo</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var OPEN = "{" + "{< ";
+  var CLOSE = " >}" + "}";
+  var state = { size: "96", rotate: "", flip: "", color: "" };
+  var stage = document.getElementById("stage");
+  var codeEl = document.getElementById("play-code");
+  var svg = stage.querySelector("svg");
+
+  function render(){
+    var t = "";
+    if (state.rotate) t += "rotate(" + state.rotate + "deg)";
+    if (state.flip === "h") t += " scaleX(-1)";
+    if (state.flip === "v") t += " scaleY(-1)";
+    if (state.flip === "both") t += " scale(-1, -1)";
+    svg.style.width = state.size + "px";
+    svg.style.height = state.size + "px";
+    stage.style.transform = t.trim();
+    stage.style.color = state.color || "";
+
+    var pairs = [["icon", "tabler:rocket"], ["size", state.size]];
+    if (state.rotate) pairs.push(["rotate", state.rotate]);
+    if (state.flip) pairs.push(["flip", state.flip]);
+    if (state.color) pairs.push(["style", "color: " + state.color]);
+
+    function span(cls, text){
+      var s = document.createElement("span");
+      s.className = cls;
+      s.textContent = text;
+      return s;
+    }
+    codeEl.textContent = "";
+    codeEl.appendChild(span("p", OPEN + "icon"));
+    pairs.forEach(function(pair){
+      codeEl.appendChild(document.createTextNode(" "));
+      codeEl.appendChild(span("p", pair[0]));
+      codeEl.appendChild(document.createTextNode('="'));
+      codeEl.appendChild(span("v", pair[1]));
+      codeEl.appendChild(document.createTextNode('"'));
+    });
+    codeEl.appendChild(span("p", CLOSE));
+  }
+
+  document.querySelectorAll(".chip-row").forEach(function(row){
+    var param = row.getAttribute("data-param");
+    row.querySelectorAll(".chip").forEach(function(chip){
+      chip.addEventListener("click", function(){
+        row.querySelectorAll(".chip").forEach(function(c){ c.setAttribute("aria-pressed","false"); });
+        chip.setAttribute("aria-pressed","true");
+        state[param] = chip.getAttribute("data-v");
+        render();
+      });
+    });
+  });
+
+  render();
+})();
+</script>
 </body>
 </html>
